@@ -125,7 +125,6 @@ namespace Lesson_5
         public static TreeStructure[] FindNameInChild(string node, TreeStructure startNode)
         {
             TreeStructure[] findingNode = new TreeStructure[0];
-            int index = 0;
             foreach (var child in startNode.children)
             {
                 string name = child?.Name;
@@ -291,11 +290,6 @@ namespace Lesson_5
         }
         private static TreeStructure AutoPaste(string comm, TreeStructure nodeToFind)
         {
-            static string returnComm(TreeStructure node)
-            {
-
-                return null;
-            }
             string[] command = comm.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var partOfComm in command)
             {
