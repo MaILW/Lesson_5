@@ -12,10 +12,11 @@ namespace Lesson_5
             var get = tree.AddChildren("get");
             get.SetNodeFunc(cw);
             tree.AddChildren("help");
-            tree.AddChildren("get_2").AddChildren("get_2_1").AddChildren("get_2_1_1");
+            tree.AddChildren("get_2").AddChildren("get_22_1").AddChildren("get_2_1_1");
             tree.AddChildren("get_3");
             tree.AddChildren("get_4");
             tree.FindNodeInAllChild("get_2")?.AddChildren("get_2_2");
+            tree.FindNodeInAllChild("get_22_1")?.AddChildren("get_2_1_2");
             tree.FindNodeInAllChild("help")?.AddChildren("FullHelp")?.SetNodeFunc(cw);
             tree.FindNodeInAllChild("help").SetNodeFunc(cw);
             //get.Parent = tree;
@@ -27,7 +28,10 @@ namespace Lesson_5
             Console.WriteLine();
             TreeStructure.PrintTree(tree, 0);
             Console.WriteLine();
-            TreeStructure.EnterCommand();
+            do
+            {
+                TreeStructure.EnterCommand();
+            } while (true);
         }
         void ClearLine(int line)
         {

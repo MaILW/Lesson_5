@@ -11,7 +11,10 @@ namespace Lesson_5
         Function Funk = delegate () {
             Console.WriteLine("Значение функции по умолчанию");
         };
-        
+        public override string ToString()
+        {
+            return this.Name;
+        }
         public TreeStructure Parent { get; private set; }
         public TreeStructure[] children = new TreeStructure[0];
         public string Name { get; private set; }
@@ -85,10 +88,29 @@ namespace Lesson_5
                 Console.WriteLine("Узел не найден.");
             return findingNode;
         }
+        public static TreeStructure FindNodeInChild(out bool sucsess, string node, TreeStructure startNode)
+        {
+            TreeStructure findingNode = startNode;
+            sucsess = false;
+            foreach (var child in startNode.children)
+            {
+                if (child?.Name == node)
+                {
+                    findingNode = child;
+                    sucsess = true;
+                    break;
+                }
+            }
+            //if (findingNode == null)
+            //    Console.WriteLine("Узел не найден.");
+            return findingNode;
+        }
         public static TreeStructure FindNodeInChild(string node, TreeStructure startNode)
         {
             TreeStructure findingNode = null;
-            foreach (var child in startNode.children)
+            if (startNode == null)
+                return findingNode;
+            foreach (var child in startNode?.children)
             {
                 if (child?.Name == node)
                 {
@@ -114,7 +136,7 @@ namespace Lesson_5
                 }
             }
             if (findingNode.Length == 0)
-                Console.WriteLine("Узел не найден.");
+                Console.WriteLine("\nУзел не найден.");
             return findingNode;
         }
         public static void EnterCommand()
@@ -129,7 +151,7 @@ namespace Lesson_5
                 }
                 return false;
             }
-            Console.WriteLine("vvod com");
+            Console.Write("vvod com\nVvod: ");
             string comm = "";
             do
             {
@@ -138,16 +160,17 @@ namespace Lesson_5
                 
                 if(ski.Key == ConsoleKey.Tab)
                 {
-                    //Console.WriteLine("tab");
-                    //Console.WriteLine();
+                    
+                    while(Console.CursorLeft != 0)
+                    {
+                        Console.Write("\b \b");
+                    }
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("tab");
+                    Console.ResetColor();
                     comm =  AutoTeste(comm, RootOfTree);
-                    Console.CursorLeft = 0;
-                    Console.Write(comm);
-                    //if(auto != null)
-                    //{
-                    //    comm = auto.Name;// peredelat'
-                    //    break;
-                    //}
+                    comm = comm.Trim();
+                    Console.Write("Vvod: " + comm);
                     continue;
                 }
                 if(ski.Key == ConsoleKey.Enter)
@@ -170,7 +193,6 @@ namespace Lesson_5
 
             } while (true);
             Console.WriteLine();
-            //Console.ReadLine();
             string[] command = comm.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             TreeStructure codeCommand = RootOfTree;
             foreach (var com in command)
@@ -190,28 +212,82 @@ namespace Lesson_5
                 TreeStructure[] findedNode = FindNameInChild(command[0], nodeToFind);
                 if (findedNode.Length == 0)
                 {
-                    return null;
-                }//dodelat
+                    //Console.Write(comm);
+                    return comm;
+                }
                 if (findedNode.Length == 1)
                 {
+                    if (findedNode[0].children != null)
+                    {
+                        foreach (var item in findedNode)
+                        {
+                            PrintTree(item);
+                        }
+                    }
+                    //Console.CursorLeft = 0;
+                    //Console.Write(findedNode[0].Name);
                     return findedNode[0].Name;
                 }
                 foreach (var item in findedNode)
                 {
                     PrintTree(item);
                 }
+                //Console.Write(comm);
+                return comm;
             }
             else
             {
-                //TreeStructure[] findedNode = FindNameInChild(command[0], nodeToFind);
                 TreeStructure codeCommand = nodeToFind;
+                bool sucsess = false;
                 foreach (var com in command)
                 {
-                    codeCommand = FindNodeInChild(com, codeCommand);
+                    codeCommand = FindNodeInChild(out sucsess, com, codeCommand);
                 }
-
+                if(sucsess == true)
+                {
+                    Console.WriteLine();
+                    if (codeCommand.children != null)
+                    {
+                       
+                            PrintTree(codeCommand);
+                        
+                    }
+                    //Console.Write(comm);
+                    return comm;
+                }
+                else
+                {
+                    if (command.Length == 0)
+                        return comm;
+                    TreeStructure[] findedNode = FindNameInChild(command[^1], codeCommand);
+                    if (findedNode.Length == 0)
+                    {
+                        return comm;
+                    }
+                    if (findedNode.Length == 1)
+                    {
+                        if (findedNode[0].children != null)
+                        {
+                            Console.WriteLine();
+                            foreach (var item in findedNode)
+                            {
+                                PrintTree(item);
+                            }
+                        }
+                        //Console.Write(comm);
+                        //Console.CursorLeft -= command[^1].Length;
+                        //Console.Write(findedNode[0].Name);
+                        return comm.Replace(command[^1], "") + findedNode[0].Name;
+                    }
+                    Console.WriteLine();
+                    foreach (var item in findedNode)
+                    {
+                        PrintTree(item);
+                    }
+                    //Console.Write(comm);
+                    return comm;
+                }
             }
-            return null;
         }
         private static TreeStructure AutoPaste(string comm, TreeStructure nodeToFind)
         {
@@ -245,6 +321,7 @@ namespace Lesson_5
 
         public static void PrintTree(TreeStructure firstNode,int PositionCursor = 0)
         {
+            
             Console.CursorLeft = PositionCursor;
             Console.Write(firstNode.Name + " ");
             PositionCursor += RootOfTree.Name.Length + 3;
@@ -258,6 +335,8 @@ namespace Lesson_5
                 Console.WriteLine();
                 
             }
+            if(firstNode.children.Length == 0)
+                Console.WriteLine();
         }
 
         //public TreeStructure this[int index]
